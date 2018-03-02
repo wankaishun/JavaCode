@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+span.error-message {
+	color: red;
+}
+
+div.error-block {
+	color: #000;
+	background-color: #ffEEEE;
+	border: 3px solid #ff0000;
+	padding: 8px;
+	margin: 16px;
+}

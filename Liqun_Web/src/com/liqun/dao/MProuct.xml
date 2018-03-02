@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liqun.dao.MProuctDao">
+
+
+	<!-- 查询表中记录总数 -->
+	<select id="countAll" resultType="long">
+		SELECT COUNT(*) FROM m_prouct;
+	</select>
+	<select id="findAll" resultType="com.liqun.entity.MProuct">
+		
+		select
+		spid,
+		spbh,
+		spm,
+		spgg,
+		spdw,
+		bhsdj,
+		hsdj,
+		sl,
+		spbm,
+		yhzc,
+		yhzclx,
+		spzt,
+		zhgxsj,
+		hkzt
+		
+		from  m_prouct 
+		
+		where 1=1
+		
+		<if test="spid != null and spid !=''">
+			and spid like concat(concat('%',#{spid}),'%')
+		</if>
+
+
+		ORDER BY m_prouct.spid DESC limit #{p.offset}, #{p.size}
+	</select>
+
+	
+	
+	
+
+	
+</mapper>
+
