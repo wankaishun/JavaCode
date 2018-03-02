@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liqun.dao.InvoiceManagementDao">
+
+
+ <resultMap id="BaseResultMap" type="com.liqun.dto.InvoiceDto" >
+  	<result column="ID" property="id" jdbcType="INTEGER" />
+    <result column="QYBH" property="qybh" jdbcType="VARCHAR" />
+    <result column="FPTQM" property="fptqm" jdbcType="VARCHAR" />
+    <result column="FPLSH" property="fplsh" jdbcType="VARCHAR" />
+    <result column="DJZT" property="djzt" jdbcType="INTEGER" />
+    <result column="DJZTNAME" property="djztName" jdbcType="VARCHAR" />
+    <result column="DJLX" property="djlx" jdbcType="INTEGER" />
+     <result column="DJLXNAME" property="djlxName" jdbcType="INTEGER" />
+    <result column="DJLY" property="djly" jdbcType="INTEGER" />
+    <result column="NSRSBH" property="nsrsbh" jdbcType="VARCHAR" />
+    <result column="FJH" property="fjh" jdbcType="VARCHAR" />
+    <result column="KPZDH" property="kpzdh" jdbcType="VARCHAR" />
+    <result column="FPZL" property="fpzl" jdbcType="INTEGER" />
+    <result column="KPLX" property="kplx" jdbcType="INTEGER" />
+    <result column="XFSH" property="xfsh" jdbcType="VARCHAR" />
+    <result column="XFMC" property="xfmc" jdbcType="VARCHAR" />
+    <result column="XFDZDH" property="xfdzdh" jdbcType="VARCHAR" />
+    <result column="XFYHZH" property="xfyhzh" jdbcType="VARCHAR" />
+    <result column="GFSH" property="gfsh" jdbcType="VARCHAR" />
+    <result column="GFMC" property="gfmc" jdbcType="VARCHAR" />
+    <result column="GFDZDH" property="gfdzdh" jdbcType="VARCHAR" />
+    <result column="GFYHZH" property="gfyhzh" jdbcType="VARCHAR" />
+    <result column="KPR" property="kpr" jdbcType="VARCHAR" />
+    <result column="SKR" property="skr" jdbcType="VARCHAR" />
+    <result column="FHR" property="fhr" jdbcType="VARCHAR" />
+    <result column="YFPDM" property="yfpdm" jdbcType="VARCHAR" />
+    <result column="YFPHM" property="yfphm" jdbcType="VARCHAR" />
+    <result column="HPTZDBH" property="hptzdbh" jdbcType="VARCHAR" />
+    <result column="QDBZ" property="qdbz" jdbcType="INTEGER" />
+    <result column="JSHJ" property="jshj" jdbcType="DECIMAL" />
+    <result column="HJJE" property="hjje" jdbcType="DECIMAL" />
+    <result column="HJSE" property="hjse" jdbcType="DECIMAL" />
+    <result column="BMBBH" property="bmbbh" jdbcType="VARCHAR" />
+    <result column="BZ" property="bz" jdbcType="VARCHAR" />
+    <result column="SJ" property="sj" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="JFZT" property="jfzt" jdbcType="INTEGER" />
+    <result column="CZSJ" property="czsj" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+	<!-- 查询表中记录总数 -->
+	<select id="countAll" resultType="long">
+		SELECT COUNT(*) FROM i_inv;
+	</select>
+	<select id="findAll" resultType="com.liqun.dto.InvoiceDto">
+		
+		select
+		(select `value` from sys_dict where  sys_dict.code='1002' and sys_dict.`key`=i.`fplx`) as fplx,
+		i.`FPTQM` as fptqm,
+		i.`FPLSH` as fplsh,
+		i.`FPDM` as fpdm,
+		i.`FPHM` as fphm,
+		DATE_FORMAT(i.`KPSJ`,'%Y-%m-%d %H:%i:%s')as kpsj,
+		i.`QYBH` as qybh,
+		i.`POS_id` as posId,
+		i.`GFMC` as gfmc,
+		i.`GFSH` as gfsh,
+		i.`GFYHZH` as gfyhzh,
+		i.`GFDZDH` as gfdzdh,
+		i.`PDFXZDZ` as pdfxzdz,
+		i.`HJJE` as hjje,
+		i.HJSE as hjse,
+		i.`KPR` as kpr,
+		i.`FHR` as fhr,
+		i.`SJH` as sjh,
+		i.`SKR` as skr,
+		a.`XFMC` as xfmc,
+		a.`XFSH` as xfsh,
+		a.`XFYHZH` as xfyhzh,
+		a.`XFDZDH` as xfdzdh,
+		a.`EMAIL` as email,
+		(select value from sys_dict where  sys_dict.code=1003 and sys_dict.`key`=a.`djzt`) as djzt
+		from  i_inv i
+		left join i_billmain a 
+		on i.`FPLSH` = a.`FPLSH`
+		
+		
+		where 1=1
+		
+		<if test="fptqm != null and fptqm !=''">
+			and i.FPTQM like concat(concat('%',#{fptqm}),'%')
+		</if>
+
+		<if test="fplsh != null and fplsh !=''">
+			and i.FPLSH like concat(concat('%',#{fplsh}),'%')
+		</if>
+		<if test="gfmc != null and gfmc !=''">
+			and i.GFMC like concat(concat('%',#{gfmc}),'%')
+		</if>
+
+		<if test="gfsh != null and gfsh !=''">
+			and i.GFSH like concat(concat('%',#{gfsh}),'%')
+		</if>
+
+		<if test="starttime != null and starttime != ''">
+			and str_to_date(i.`kpsj`,'%Y-%m-%d') <![CDATA[>=]]> str_to_date(#{starttime},'%Y-%m-%d')
+		</if>
+
+		<if test="endtime != null and endtime != ''">
+			and str_to_date(i.`kpsj`,'%Y-%m-%d') <![CDATA[<=]]> str_to_date(#{endtime},'%Y-%m-%d')
+		</if>
+
+		<if test="djzt != null and djzt!= ''">
+		and a.DJZT = #{djzt}
+		</if>
+		ORDER BY i.fplx  limit #{p.offset}, #{p.size}
+	</select>
+	
+	<!-- <select id="findList" resultType="com.liqun.dto.InvoiceDto">
+	select c.`value` as fplx FROM sys_dict c  where c.`code` = 1002
+	
+	</select> -->
+	
+	
+	
+	 <select id="getIBillmainForExport" resultMap="BaseResultMap">
+   select 
+	T1.id,T1.QYBH, T1.FPTQM, T1.FPLSH, T1.DJZT,
+	(SELECT VALUE FROM SYS_DICT T2 WHERE T2.CODE='1003' AND T2.KEY =T1.DJZT ) DJZTNAME, 
+	(SELECT VALUE FROM SYS_DICT T2 WHERE T2.CODE='1009' AND T2.KEY =T1.DJLX ) DJLXNAME, 
+	 T1.DJLX,T1.DJLY, T1.NSRSBH, 
+	T1.FJH, T1.KPZDH, T1.FPZL, T1.KPLX, T1.XFSH, T1.XFMC,T1.XFDZDH, T1.XFYHZH, T1.GFSH, 
+	T1.GFMC, T1.GFDZDH, T1.GFYHZH, T1.KPR, T1.SKR, T1.FHR, T1.YFPDM, T1.YFPHM, T1.HPTZDBH, 
+    T1.QDBZ, T1.JSHJ, T1.HJJE, T1.HJSE, T1.BMBBH, T1.BZ, T1.SJ, T1.EMAIL, T1.JFZT, T1.CZSJ,
+    i.KPSJ
+   from i_billmain  T1
+   left join i_inv i  i
+  	<where>
+  		<if test="djzt != null and djzt != ''">
+   		and T1.DJZT =#{djzt}
+      	</if>
+   		<if test="fptqm != null and fptqm != ''">
+   		and T1.fptqm like concat('%',replace(replace(#{fptqm}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+		<if test="fplsh != null and fplsh != ''">
+		and T1.fplsh like concat('%',replace(replace(#{fplsh}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="gfmc != null and gfmc != ''">
+      	and T1.gfmc like concat('%',replace(replace(#{gfmc}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="gfsh != null and gfsh != ''">
+      	and T1.gfsh like concat('%',replace(replace(#{gfsh}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="starttime != null and starttime != ''">  
+      		and str_to_date(i.kpsj,'%Y-%m-%d') <![CDATA[>=]]> str_to_date(#{starttime},'%Y-%m-%d')
+        </if>  
+         <if test="endtime != null and endtime != ''">  
+            and str_to_date(i.kpsj,'%Y-%m-%d') <![CDATA[<=]]> str_to_date(#{endtime},'%Y-%m-%d')
+        </if>  
+      </where>
+      order by
+		i.POS_id desc
+   </select>
+	 
+	
+</mapper>
+

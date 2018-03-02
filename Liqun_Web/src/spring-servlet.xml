@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+		http://www.springframework.org/schema/aop    
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<context:component-scan base-package="com.liqun" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+		<context:include-filter type="annotation" expression="org.springframework.web.servlet.config.annotation.EnableWebMvc"/>
+	</context:component-scan>
+
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="false">
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper" ref="jacksonObjectMapper"/>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	
+	<mvc:default-servlet-handler />
+
+	<!-- 使容器内的bean支持shiro权限注解 -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor" >
+	    	<property name="proxyTargetClass" value="true"/>
+    </bean>
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+	
+	
+	<!-- freemarker config -->
+	<bean id="freemarkerConfig" class="com.liqun.web.DefaultFreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/views/" />
+		<property name="freemarkerSettings">
+			<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+			    <property name="location" value="classpath:freemarker.properties" />
+			</bean>
+		</property>
+		
+	</bean>  
+	
+	<!-- 
+	  View resolvers can also be configured with ResourceBundles or XML files. If you need
+	  different view resolving based on Locale, you have to use the resource bundle resolver.
+	-->
+	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" />
+		<property name="contentType" value="text/html; charset=UTF-8" />
+		<property name="exposeRequestAttributes" value="true" />
+		<property name="exposeSessionAttributes" value="true" />
+		<property name="exposeSpringMacroHelpers" value="false" />
+		<property name="requestContextAttribute" value="request" />
+<!-- 		<property name="cache" value="true" /> -->
+		<property name="prefix" value="" />
+		<property name="suffix" value=".ftl" />
+		<property name="order" value="1" />
+	</bean>
+
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/"></property>
+		<property name="suffix" value=".jsp"></property>
+<!-- 		<property name="order" value="0" /> -->
+	</bean>
+	
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="messageSource" />
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+	</bean>
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/api/**"/>
+			<bean class="com.liqun.web.ViewStateHandlingInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<!--激活aop注解支持,通过aop往数据库写操作日志用-->
+	<aop:aspectj-autoproxy/> 
+</beans>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liqun.dao.BizMemberInfoDao">
+
+	<!-- 根据条件检索会员信息 -->
+	<select id="queryByConditions" resultType="com.liqun.entity.BizMemberInfo">
+		select
+		 t.`id`
+		,t.`headimgurl`
+		,t.`realname`
+		,t.`mobile`
+		,date_format(t.`registerTime`,'%Y-%m-%d') as registerTime
+		from
+		biz_member_info t
+		<where>
+			t.flag = '1'
+			<if test="starttime != null and starttime != ''">
+				and str_to_date(t.`registerTime`,'%Y-%m-%d') <![CDATA[>=]]> str_to_date(#{starttime},'%Y-%m-%d')
+			</if>
+			<if test="endtime != null and endtime != ''">
+				and str_to_date(t.`registerTime`,'%Y-%m-%d') <![CDATA[<=]]> str_to_date(#{endtime},'%Y-%m-%d')
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and t.`mobile` like concat('%',replace(replace(#{mobile}, '_', '\_'),'%', '\%'),'%')
+			</if>
+		</where>
+		order by
+		t.`registerTime` desc
+		limit
+		#{p.offset}, #{p.size}
+	</select>
+	<!-- 检索表中记录总数 -->
+	<select id="countAll" resultType="long">
+		select count(*) from (select
+		 t.`id`
+		,t.`headimgurl`
+		,t.`realname`
+		,t.`mobile`
+		,date_format(t.`registerTime`,'%Y-%m-%d') as registerTime
+		from
+		biz_member_info t
+		<where>
+			t.flag = '1'
+			<if test="starttime != null and starttime != ''">
+				and str_to_date(t.`registerTime`,'%Y-%m-%d') <![CDATA[>=]]> str_to_date(#{starttime},'%Y-%m-%d')
+			</if>
+			<if test="endtime != null and endtime != ''">
+				and str_to_date(t.`registerTime`,'%Y-%m-%d') <![CDATA[<=]]> str_to_date(#{endtime},'%Y-%m-%d')
+			</if>
+			<if test="mobile != null and mobile != ''">
+				and t.`mobile` like concat('%',replace(replace(#{mobile}, '_', '\_'),'%', '\%'),'%')
+			</if>
+		</where>
+		order by
+		t.`registerTime` desc
+		) T1
+	</select>
+	<select id="getMemberInfoById" resultType="com.liqun.entity.BizMemberInfo">
+	select
+		 t0.`id` as id
+		,t0.`headimgurl` as headimgurl
+		,t0.`nickname` as nickname
+		,t0.`openId` as openId
+		,t0.`realname` as realname	
+		,t0.`mobile` as mobile
+		,t1.`regionName` as provinceName
+		,t2.`regionName` as cityName
+		,t3.`regionName` as countyName
+		,t0.`address` as address
+		,t0.`registerTime` as registerTime
+	from
+		biz_member_info t0
+	left join regions t1 
+		on t0.`provinceCode` = t1.`code` 
+		and t1.regionType = '1'
+	left join regions t2 
+		on t0.`cityCode` = t2.`code` 
+		and t2.regionType = '2'
+	left join regions t3 
+		on t0.`countyCode` = t3.`code` 
+		and t3.regionType = '3'
+		<where>
+			t0.flag = '1'
+			and t0.`id` = #{id}
+		</where>
+	</select>
+</mapper>

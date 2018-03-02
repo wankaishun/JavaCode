@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.liqun.dao.BizProductCategoryDao">
+
+<!-- 是否存在该编号 -->
+<select id="categoryExist" resultType="long">  
+	SELECT COUNT(*) FROM biz_product_category where productCategoryNo=#{productCategoryNo} ;
+</select>
+<!-- 查询表中的所有数据 -->
+<select id="selectAll" resultType="com.liqun.entity.BizProductCategory">    
+	SELECT * FROM biz_product_category 
+</select>
+
+<!-- 插入数据 -->
+<insert id="insert"	parameterType="com.liqun.entity.BizProductCategory" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    INSERT INTO biz_product_category(productCategoryNo,productCategoryName,reserve1,reserve2,reserve3,reserve4,reserve5,flag,createUser,createDate,updateUser,updateDate)
+    VALUES (#{productCategoryNo}, #{productCategoryName}, #{reserve1}, #{reserve2}, #{reserve3}, #{reserve4}, #{reserve5}, #{flag}, #{createUser}, #{createDate}, #{updateUser}, #{updateDate})
+</insert>
+
+<!-- 更新数据 -->
+<update id="update"	parameterType="com.liqun.entity.BizProductCategory">
+   UPDATE biz_product_category SET productCategoryNo=ifnull(#{productCategoryNo}, productCategoryNo), productCategoryName=ifnull(#{productCategoryName}, productCategoryName)
+   , reserve1=ifnull(#{reserve1}, reserve1), reserve2=ifnull(#{reserve2}, reserve2), reserve3=ifnull(#{reserve3}, reserve3)
+   , reserve4=ifnull(#{reserve4}, Reserve4), reserve5=ifnull(#{reserve5}, Reserve5)
+   , flag=ifnull(#{flag}, Flag), createUser=ifnull(#{createUser}, CreateUser), createDate=ifnull(#{createDate}, CreateDate)
+   , updateUser=ifnull(#{updateUser}, UpdateUser), updateDate=ifnull(#{updateDate}, UpdateDate) 
+   WHERE id=#{id}
+</update>
+
+<!-- 根据主键删除数据 -->
+<delete id="delete" parameterType="java.lang.Long">    
+	DELETE FROM biz_product_category  WHERE id =#{id}
+</delete>
+
+<!-- 根据主键查找数据模型 -->
+<select id="findByName" parameterType="java.lang.String" resultType="com.liqun.entity.BizProductCategory"> 
+	SELECT * FROM biz_product_category  WHERE productCategoryName =#{productCategoryName }
+</select>
+<!-- 查询表中记录总数 -->
+<select id="countAll" resultType="long">  
+	SELECT COUNT(*) FROM biz_product_category where flag =ifnull(#{flag}, flag) and productCategoryName LIKE '%${productCategoryName}%'
+</select>
+ <!-- 根据主键DB分页 需要重新指定分页类的命名空间 主键排序 以及limit 分页参数 -->
+<select id="findAll" resultType="com.liqun.entity.BizProductCategory">
+	SELECT * FROM biz_product_category where flag =ifnull(#{flag}, flag) and productCategoryName LIKE '%${productCategoryName}%' ORDER BY productCategoryName  DESC limit #{p.offset}, #{p.size}
+</select>
+
+</mapper>
+

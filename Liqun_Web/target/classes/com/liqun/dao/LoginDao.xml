@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.liqun.dao.LoginDao">
+
+	<select id="findUserByUserName" parameterType="java.lang.String" resultType="com.liqun.entity.SysUser"> 
+		SELECT * FROM sys_user  WHERE account =#{account};
+	</select>
+	<select id="findUserById" parameterType="java.lang.Integer" resultType="com.liqun.entity.SysUser">
+		SELECT * FROM `sys_user` WHERE id=#{id};
+	</select>
+	<select id="findRoleByRoleId" parameterType="java.lang.Integer" resultType="com.liqun.entity.SysRole">
+		SELECT * FROM `sys_role` WHERE roleId=#{roleId};
+	</select>
+	<select id="findPermissionByRoleId" parameterType="java.lang.Integer" resultType="com.liqun.entity.SysPermission">
+		SELECT `permissionCode` FROM `sys_role_permission` sr LEFT JOIN `sys_permission` sp ON sr.permissionId = sp.permissionId
+		WHERE roleId=#{roleId};
+	</select>
+	
+</mapper>

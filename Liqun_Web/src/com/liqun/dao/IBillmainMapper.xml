@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liqun.dao.IBillmainMapper" >
+  <resultMap id="BaseResultMap" type="com.liqun.entity.IBillmain" >
+  	<result column="ID" property="id" jdbcType="INTEGER" />
+    <result column="QYBH" property="qybh" jdbcType="VARCHAR" />
+    <result column="FPTQM" property="fptqm" jdbcType="VARCHAR" />
+    <result column="FPLSH" property="fplsh" jdbcType="VARCHAR" />
+    <result column="DJZT" property="djzt" jdbcType="INTEGER" />
+    <result column="DJZTNAME" property="djztName" jdbcType="VARCHAR" />
+    <result column="DJLX" property="djlx" jdbcType="INTEGER" />
+     <result column="DJLXNAME" property="djlxName" jdbcType="INTEGER" />
+    <result column="DJLY" property="djly" jdbcType="INTEGER" />
+    <result column="NSRSBH" property="nsrsbh" jdbcType="VARCHAR" />
+    <result column="FJH" property="fjh" jdbcType="VARCHAR" />
+    <result column="KPZDH" property="kpzdh" jdbcType="VARCHAR" />
+    <result column="FPZL" property="fpzl" jdbcType="INTEGER" />
+    <result column="KPLX" property="kplx" jdbcType="INTEGER" />
+    <result column="XFSH" property="xfsh" jdbcType="VARCHAR" />
+    <result column="XFMC" property="xfmc" jdbcType="VARCHAR" />
+    <result column="XFDZDH" property="xfdzdh" jdbcType="VARCHAR" />
+    <result column="XFYHZH" property="xfyhzh" jdbcType="VARCHAR" />
+    <result column="GFSH" property="gfsh" jdbcType="VARCHAR" />
+    <result column="GFMC" property="gfmc" jdbcType="VARCHAR" />
+    <result column="GFDZDH" property="gfdzdh" jdbcType="VARCHAR" />
+    <result column="GFYHZH" property="gfyhzh" jdbcType="VARCHAR" />
+    <result column="KPR" property="kpr" jdbcType="VARCHAR" />
+    <result column="SKR" property="skr" jdbcType="VARCHAR" />
+    <result column="FHR" property="fhr" jdbcType="VARCHAR" />
+    <result column="YFPDM" property="yfpdm" jdbcType="VARCHAR" />
+    <result column="YFPHM" property="yfphm" jdbcType="VARCHAR" />
+    <result column="HPTZDBH" property="hptzdbh" jdbcType="VARCHAR" />
+    <result column="QDBZ" property="qdbz" jdbcType="INTEGER" />
+    <result column="JSHJ" property="jshj" jdbcType="DECIMAL" />
+    <result column="HJJE" property="hjje" jdbcType="DECIMAL" />
+    <result column="HJSE" property="hjse" jdbcType="DECIMAL" />
+    <result column="BMBBH" property="bmbbh" jdbcType="VARCHAR" />
+    <result column="BZ" property="bz" jdbcType="VARCHAR" />
+    <result column="SJ" property="sj" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="JFZT" property="jfzt" jdbcType="INTEGER" />
+    <result column="CZSJ" property="czsj" jdbcType="TIMESTAMP" />
+  </resultMap>
+   
+  <sql id="Base_Column_List" >
+    id,QYBH, FPTQM, FPLSH, DJZT, DJLX, DJLY, NSRSBH, FJH, KPZDH, FPZL, KPLX, XFSH, XFMC, 
+    XFDZDH, XFYHZH, GFSH, GFMC, GFDZDH, GFYHZH, KPR, SKR, FHR, YFPDM, YFPHM, HPTZDBH, 
+    QDBZ, JSHJ, HJJE, HJSE, BMBBH, BZ, SJ, EMAIL, JFZT, CZSJ
+  </sql>
+   <select id="getBillmainBy" resultType="com.htxx.pojo.i_billmain" parameterType="com.liqun.dto.lqinput.searchbill.Input">
+   select <include refid="Base_Column_List" />
+   from i_billmain 
+   where 1=1 
+   <if test="tqm != null and tqm != ''">
+		and fptqm=#{tqm,jdbcType=VARCHAR} 
+    </if>
+    <if test="lsh != null and lsh != ''">
+		and fplsh=#{lsh,jdbcType=VARCHAR} 
+    </if>
+   </select>
+   <select id="getIBillmainByFPLSH" resultMap="BaseResultMap" parameterType="java.util.Map">
+   	select <include refid="Base_Column_List" />
+   	from i_billmain 
+   	 <where>  
+   	 	<if test="djzt != null and djzt != ''">
+   		and  DJZT =#{djzt}
+      	</if>
+         fplsh 
+         <foreach  collection="fplshs" item="item" open="in (" close=")" separator=",">   
+             #{item}  
+         </foreach>  
+     </where>
+   </select>
+   <select id="getIBillmainList" resultMap="BaseResultMap">
+   select 
+	T1.id,T1.QYBH, T1.FPTQM, T1.FPLSH, T1.DJZT,
+	(SELECT VALUE FROM SYS_DICT T2 WHERE T2.CODE='1003' AND T2.KEY =T1.DJZT ) DJZTNAME, 
+	(SELECT VALUE FROM SYS_DICT T2 WHERE T2.CODE='1009' AND T2.KEY =T1.DJLX ) DJLXNAME, 
+	 T1.DJLX,T1.DJLY, T1.NSRSBH, 
+	T1.FJH, T1.KPZDH, T1.FPZL, T1.KPLX, T1.XFSH, T1.XFMC,T1.XFDZDH, T1.XFYHZH, T1.GFSH, 
+	T1.GFMC, T1.GFDZDH, T1.GFYHZH, T1.KPR, T1.SKR, T1.FHR, T1.YFPDM, T1.YFPHM, T1.HPTZDBH, 
+    T1.QDBZ, T1.JSHJ, T1.HJJE, T1.HJSE, T1.BMBBH, T1.BZ, T1.SJ, T1.EMAIL, T1.JFZT, T1.CZSJ
+   from i_billmain  T1
+  	<where>
+  		<if test="djzt != null and djzt != ''">
+   		and T1.DJZT =#{djzt}
+      	</if>
+   		<if test="fptqm != null and fptqm != ''">
+   		and T1.fptqm like concat('%',replace(replace(#{fptqm}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+		<if test="fplsh != null and fplsh != ''">
+		and T1.fplsh like concat('%',replace(replace(#{fplsh}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="gfmc != null and gfmc != ''">
+      	and T1.gfmc like concat('%',replace(replace(#{gfmc}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="gfsh != null and gfsh != ''">
+      	and T1.gfsh like concat('%',replace(replace(#{gfsh}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="starttime != null and starttime != ''">  
+      		and str_to_date(T1.czsj,'%Y-%m-%d') <![CDATA[>=]]> str_to_date(#{starttime},'%Y-%m-%d')
+        </if>  
+         <if test="endtime != null and endtime != ''">  
+            and str_to_date(T1.czsj,'%Y-%m-%d') <![CDATA[<=]]> str_to_date(#{endtime},'%Y-%m-%d')
+        </if>  
+      </where>
+      order by
+		czsj desc
+		limit
+		#{p.offset}, #{p.size}
+   </select>
+   <select id="getIBillmainForExport" resultMap="BaseResultMap">
+   select 
+	T1.id,T1.QYBH, T1.FPTQM, T1.FPLSH, T1.DJZT,
+	(SELECT VALUE FROM SYS_DICT T2 WHERE T2.CODE='1003' AND T2.KEY =T1.DJZT ) DJZTNAME, 
+	(SELECT VALUE FROM SYS_DICT T2 WHERE T2.CODE='1009' AND T2.KEY =T1.DJLX ) DJLXNAME, 
+	 T1.DJLX,T1.DJLY, T1.NSRSBH, 
+	T1.FJH, T1.KPZDH, T1.FPZL, T1.KPLX, T1.XFSH, T1.XFMC,T1.XFDZDH, T1.XFYHZH, T1.GFSH, 
+	T1.GFMC, T1.GFDZDH, T1.GFYHZH, T1.KPR, T1.SKR, T1.FHR, T1.YFPDM, T1.YFPHM, T1.HPTZDBH, 
+    T1.QDBZ, T1.JSHJ, T1.HJJE, T1.HJSE, T1.BMBBH, T1.BZ, T1.SJ, T1.EMAIL, T1.JFZT, T1.CZSJ
+   from i_billmain  T1
+  	<where>
+  		<if test="djzt != null and djzt != ''">
+   		and T1.DJZT =#{djzt}
+      	</if>
+   		<if test="fptqm != null and fptqm != ''">
+   		and T1.fptqm like concat('%',replace(replace(#{fptqm}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+		<if test="fplsh != null and fplsh != ''">
+		and T1.fplsh like concat('%',replace(replace(#{fplsh}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="gfmc != null and gfmc != ''">
+      	and T1.gfmc like concat('%',replace(replace(#{gfmc}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="gfsh != null and gfsh != ''">
+      	and T1.gfsh like concat('%',replace(replace(#{gfsh}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="starttime != null and starttime != ''">  
+      		and str_to_date(T1.czsj,'%Y-%m-%d') <![CDATA[>=]]> str_to_date(#{starttime},'%Y-%m-%d')
+        </if>  
+         <if test="endtime != null and endtime != ''">  
+            and str_to_date(T1.czsj,'%Y-%m-%d') <![CDATA[<=]]> str_to_date(#{endtime},'%Y-%m-%d')
+        </if>  
+      </where>
+      order by
+		czsj desc
+   </select>
+   <select id="countAll" resultType="long" >
+   select count(*) from i_billmain 
+  	<where>
+   		<if test="djzt != null and djzt != ''">
+   		and DJZT =#{djzt}
+      	</if>
+   		<if test="fptqm != null and fptqm != ''">
+   		and fptqm like concat('%',replace(replace(#{fptqm}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+		<if test="fplsh != null and fplsh != ''">
+		and fplsh like concat('%',replace(replace(#{fplsh}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="gfmc != null and gfmc != ''">
+      	and gfmc like concat('%',replace(replace(#{gfmc}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="gfsh != null and gfsh != ''">
+      	and gfsh like concat('%',replace(replace(#{gfsh}, '_', '\_'),'%', '\%'), '%')
+      	</if>
+      	<if test="starttime != null and starttime != ''">  
+      		and str_to_date(czsj,'%Y-%m-%d') <![CDATA[>=]]> str_to_date(#{starttime},'%Y-%m-%d')
+        </if>  
+         <if test="endtime != null and endtime != ''">  
+            and str_to_date(czsj,'%Y-%m-%d') <![CDATA[<=]]> str_to_date(#{endtime},'%Y-%m-%d')
+        </if>
+      </where>
+   </select>
+   <update id="updateDjzt" parameterType="java.util.Map" >
+    update i_billmain
+      set djzt=#{djzt}
+    <where>  
+         fplsh 
+         <foreach  collection="fplshs" item="item" open="in (" close=")" separator=",">   
+             #{item}  
+         </foreach>  
+     </where>
+   </update>
+   <select id="getIBillmain" parameterType="java.util.Map" resultMap="BaseResultMap">
+   	select id,QYBH, CONCAT(FPTQM,'-') FPTQM, CONCAT(FPLSH,'-') FPLSH, 0 as DJZT, DJLX, DJLY, NSRSBH, FJH, KPZDH, FPZL, KPLX, XFSH, XFMC, 
+    XFDZDH, XFYHZH, GFSH, GFMC, GFDZDH, GFYHZH, KPR, SKR, FHR, YFPDM, YFPHM, HPTZDBH, 
+    QDBZ, SUM(JSHJ) as JSHJ,SUM(HJJE) as HJJE,SUM(HJSE) as HJSE, BMBBH, BZ, SJ, EMAIL, JFZT, CZSJ
+ 	from i_billmain
+ 	<where>  
+         fplsh 
+         <foreach  collection="fplshs" item="item" open="in (" close=")" separator=",">   
+             #{item}  
+         </foreach>  
+     </where>
+     GROUP BY gfsh
+   	
+   </select>
+  <insert id="insert" parameterType="com.liqun.entity.IBillmain" >
+    insert into i_billmain (QYBH, FPTQM, FPLSH, 
+      DJZT, DJLX, DJLY, NSRSBH, 
+      FJH, KPZDH, FPZL, KPLX, 
+      XFSH, XFMC, XFDZDH, 
+      XFYHZH, GFSH, GFMC, 
+      GFDZDH, GFYHZH, KPR, 
+      SKR, FHR, YFPDM, YFPHM, 
+      HPTZDBH, QDBZ, JSHJ, 
+      HJJE, HJSE, BMBBH, 
+      BZ, SJ, EMAIL, JFZT, 
+      CZSJ)
+    values (#{qybh,jdbcType=VARCHAR}, #{fptqm,jdbcType=VARCHAR}, #{fplsh,jdbcType=VARCHAR}, 
+      #{djzt,jdbcType=INTEGER}, #{djlx,jdbcType=INTEGER}, #{djly,jdbcType=INTEGER}, #{nsrsbh,jdbcType=VARCHAR}, 
+      #{fjh,jdbcType=VARCHAR}, #{kpzdh,jdbcType=VARCHAR}, #{fpzl,jdbcType=INTEGER}, #{kplx,jdbcType=INTEGER}, 
+      #{xfsh,jdbcType=VARCHAR}, #{xfmc,jdbcType=VARCHAR}, #{xfdzdh,jdbcType=VARCHAR}, 
+      #{xfyhzh,jdbcType=VARCHAR}, #{gfsh,jdbcType=VARCHAR}, #{gfmc,jdbcType=VARCHAR}, 
+      #{gfdzdh,jdbcType=VARCHAR}, #{gfyhzh,jdbcType=VARCHAR}, #{kpr,jdbcType=VARCHAR}, 
+      #{skr,jdbcType=VARCHAR}, #{fhr,jdbcType=VARCHAR}, #{yfpdm,jdbcType=VARCHAR}, #{yfphm,jdbcType=VARCHAR}, 
+      #{hptzdbh,jdbcType=VARCHAR}, #{qdbz,jdbcType=INTEGER}, #{jshj,jdbcType=DECIMAL}, 
+      #{hjje,jdbcType=DECIMAL}, #{hjse,jdbcType=DECIMAL}, #{bmbbh,jdbcType=VARCHAR}, 
+      #{bz,jdbcType=VARCHAR}, #{sj,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{jfzt,jdbcType=INTEGER}, 
+      #{czsj,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.liqun.entity.IBillmain" >
+    insert into i_billmain
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="qybh != null" >
+        QYBH,
+      </if>
+      <if test="fptqm != null" >
+        FPTQM,
+      </if>
+      <if test="fplsh != null" >
+        FPLSH,
+      </if>
+      <if test="djzt != null" >
+        DJZT,
+      </if>
+      <if test="djlx != null" >
+        DJLX,
+      </if>
+      <if test="djly != null" >
+        DJLY,
+      </if>
+      <if test="nsrsbh != null" >
+        NSRSBH,
+      </if>
+      <if test="fjh != null" >
+        FJH,
+      </if>
+      <if test="kpzdh != null" >
+        KPZDH,
+      </if>
+      <if test="fpzl != null" >
+        FPZL,
+      </if>
+      <if test="kplx != null" >
+        KPLX,
+      </if>
+      <if test="xfsh != null" >
+        XFSH,
+      </if>
+      <if test="xfmc != null" >
+        XFMC,
+      </if>
+      <if test="xfdzdh != null" >
+        XFDZDH,
+      </if>
+      <if test="xfyhzh != null" >
+        XFYHZH,
+      </if>
+      <if test="gfsh != null" >
+        GFSH,
+      </if>
+      <if test="gfmc != null" >
+        GFMC,
+      </if>
+      <if test="gfdzdh != null" >
+        GFDZDH,
+      </if>
+      <if test="gfyhzh != null" >
+        GFYHZH,
+      </if>
+      <if test="kpr != null" >
+        KPR,
+      </if>
+      <if test="skr != null" >
+        SKR,
+      </if>
+      <if test="fhr != null" >
+        FHR,
+      </if>
+      <if test="yfpdm != null" >
+        YFPDM,
+      </if>
+      <if test="yfphm != null" >
+        YFPHM,
+      </if>
+      <if test="hptzdbh != null" >
+        HPTZDBH,
+      </if>
+      <if test="qdbz != null" >
+        QDBZ,
+      </if>
+      <if test="jshj != null" >
+        JSHJ,
+      </if>
+      <if test="hjje != null" >
+        HJJE,
+      </if>
+      <if test="hjse != null" >
+        HJSE,
+      </if>
+      <if test="bmbbh != null" >
+        BMBBH,
+      </if>
+      <if test="bz != null" >
+        BZ,
+      </if>
+      <if test="sj != null" >
+        SJ,
+      </if>
+      <if test="email != null" >
+        EMAIL,
+      </if>
+      <if test="jfzt != null" >
+        JFZT,
+      </if>
+        CZSJ
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="qybh != null" >
+        #{qybh,jdbcType=VARCHAR},
+      </if>
+      <if test="fptqm != null" >
+        #{fptqm,jdbcType=VARCHAR},
+      </if>
+      <if test="fplsh != null" >
+        #{fplsh,jdbcType=VARCHAR},
+      </if>
+      <if test="djzt != null" >
+        #{djzt,jdbcType=INTEGER},
+      </if>
+      <if test="djlx != null" >
+        #{djlx,jdbcType=INTEGER},
+      </if>
+      <if test="djly != null" >
+        #{djly,jdbcType=INTEGER},
+      </if>
+      <if test="nsrsbh != null" >
+        #{nsrsbh,jdbcType=VARCHAR},
+      </if>
+      <if test="fjh != null" >
+        #{fjh,jdbcType=VARCHAR},
+      </if>
+      <if test="kpzdh != null" >
+        #{kpzdh,jdbcType=VARCHAR},
+      </if>
+      <if test="fpzl != null" >
+        #{fpzl,jdbcType=INTEGER},
+      </if>
+      <if test="kplx != null" >
+        #{kplx,jdbcType=INTEGER},
+      </if>
+      <if test="xfsh != null" >
+        #{xfsh,jdbcType=VARCHAR},
+      </if>
+      <if test="xfmc != null" >
+        #{xfmc,jdbcType=VARCHAR},
+      </if>
+      <if test="xfdzdh != null" >
+        #{xfdzdh,jdbcType=VARCHAR},
+      </if>
+      <if test="xfyhzh != null" >
+        #{xfyhzh,jdbcType=VARCHAR},
+      </if>
+      <if test="gfsh != null" >
+        #{gfsh,jdbcType=VARCHAR},
+      </if>
+      <if test="gfmc != null" >
+        #{gfmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gfdzdh != null" >
+        #{gfdzdh,jdbcType=VARCHAR},
+      </if>
+      <if test="gfyhzh != null" >
+        #{gfyhzh,jdbcType=VARCHAR},
+      </if>
+      <if test="kpr != null" >
+        #{kpr,jdbcType=VARCHAR},
+      </if>
+      <if test="skr != null" >
+        #{skr,jdbcType=VARCHAR},
+      </if>
+      <if test="fhr != null" >
+        #{fhr,jdbcType=VARCHAR},
+      </if>
+      <if test="yfpdm != null" >
+        #{yfpdm,jdbcType=VARCHAR},
+      </if>
+      <if test="yfphm != null" >
+        #{yfphm,jdbcType=VARCHAR},
+      </if>
+      <if test="hptzdbh != null" >
+        #{hptzdbh,jdbcType=VARCHAR},
+      </if>
+      <if test="qdbz != null" >
+        #{qdbz,jdbcType=INTEGER},
+      </if>
+      <if test="jshj != null" >
+        #{jshj,jdbcType=DECIMAL},
+      </if>
+      <if test="hjje != null" >
+        #{hjje,jdbcType=DECIMAL},
+      </if>
+      <if test="hjse != null" >
+        #{hjse,jdbcType=DECIMAL},
+      </if>
+      <if test="bmbbh != null" >
+        #{bmbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        #{bz,jdbcType=VARCHAR},
+      </if>
+      <if test="sj != null" >
+        #{sj,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="jfzt != null" >
+        #{jfzt,jdbcType=INTEGER},
+      </if>
+      	now()
+    </trim>
+  </insert>
+</mapper>

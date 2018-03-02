@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.liqun.dao.SysRolePermissionDao">
+
+<!-- 查询表中记录总数 -->
+<select id="countAll" resultType="long">  
+	SELECT COUNT(*) FROM sys_role_permission;
+</select>
+
+<!-- 查询表中的所有数据 -->
+<select id="selectAll" resultType="com.liqun.entity.SysRolePermission">    
+	SELECT * FROM sys_role_permission 
+</select>
+
+<!-- 插入数据 -->
+<insert id="insert"	parameterType="com.liqun.entity.SysRolePermission" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    INSERT INTO sys_role_permission (roleId, permissionId, reserve1, reserve2, reserve3, reserve4, reserve5, flag, createUser, createDate, updateUser, updateDate)
+    VALUES (#{roleId}, #{permissionId}, #{reserve1}, #{reserve2}, #{reserve3}, #{reserve4}, #{reserve5}, #{flag}, #{createUser}, #{createDate}, #{updateUser}, #{updateDate})
+</insert>
+
+<!-- 更新数据 -->
+<update id="update"	parameterType="com.liqun.entity.SysRolePermission">
+   UPDATE sys_role_permission SET roleId=ISNULL(#{roleId}, RoleId), permissionId=ISNULL(#{permissionId}, PermissionId), reserve1=ISNULL(#{reserve1}, Reserve1), reserve2=ISNULL(#{reserve2}, Reserve2), reserve3=ISNULL(#{reserve3}, Reserve3), reserve4=ISNULL(#{reserve4}, Reserve4), reserve5=ISNULL(#{reserve5}, Reserve5), flag=ISNULL(#{flag}, Flag), createUser=ISNULL(#{createUser}, CreateUser), createDate=ISNULL(#{createDate}, CreateDate), updateUser=ISNULL(#{updateUser}, UpdateUser), updateDate=ISNULL(#{updateDate}, UpdateDate) WHERE id=#{id}
+</update>
+
+<!-- 根据主键删除数据 -->
+<delete id="delete" parameterType="java.lang.Long">    
+	DELETE FROM sys_role_permission  WHERE id =#{id}
+</delete>
+
+<!-- 根据roleId删除数据 -->
+<delete id="deleteByRoleId" parameterType="java.lang.Integer">    
+	DELETE FROM sys_role_permission  WHERE roleId =#{roleId}
+</delete>
+
+<!-- 根据主键查找数据模型 -->
+<select id="findByRoleId" parameterType="java.lang.Integer" resultType="com.liqun.entity.SysRolePermission"> 
+	SELECT * FROM sys_role_permission  WHERE FLAG=1 AND RoleId =#{roleId}
+</select>
+
+ <!-- 根据主键DB分页 需要重新指定分页类的命名空间 主键排序 以及limit 分页参数 -->
+<select id="findAll" resultType="com.liqun.entity.SysRolePermission">
+	SELECT * FROM sys_role_permission  ORDER BY id  DESC limit #{p.offset}, #{p.size}
+</select>
+
+</mapper>
+

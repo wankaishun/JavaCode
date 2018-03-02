@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liqun.dao.BmSpflZtreeDao" >
+	<resultMap id="menuItem" type="com.liqun.entity.NewMenuItem">
+		<id property="id" column="bm" />
+		<result property="text" column="mc" />
+		<result property="parentId" column="sjbm" />
+	</resultMap>
+	<resultMap id="SubPrivilegesResult" type="com.liqun.entity.NewMenuItem"
+		extends="menuItem">
+		<collection property="children" javaType="java.util.ArrayList"
+			column="bm" ofType="NewMenuItem" select="selectSubPrivileges"></collection>
+	</resultMap>
+	
+  	<select id="getCmTree" resultMap="SubPrivilegesResult"
+		useCache="true">
+    select
+    a.bm, 
+    a.hbbm, 
+    a.mc, 
+    a.sm, 
+    a.slv, 
+    a.zzstsgl, 
+    a.zzszcyj, 
+    a.zzstsnrdm, 
+    a.xfsgl, 
+    a.xfszcyj, 
+    a.xfstsnrdm, 
+    a.gjz, 
+    a.hzx, 
+    a.tjjbm, 
+    a.bmb_bbh as bmbBbh, 
+    a.bbh, 
+    a.kyzt, 
+    a.qysj, 
+    a.gdqjzsj, 
+    a.sjbm, 
+    a.gxsj, 
+    a.wj, 
+    a.ishide, 
+    a.slvselect, 
+    a.yhzc, 
+    a.yhzcmc, 
+    a.lslvbs
+    from bm_spfl a
+    where
+    ISNULL(a.sjbm)  
+	AND a.ishide= #{ishide}
+  	</select>
+	<select id="selectSubPrivileges" resultMap="SubPrivilegesResult">
+	select
+    a.bm, 
+    a.hbbm, 
+    a.mc, 
+    a.sm, 
+    a.slv, 
+    a.zzstsgl, 
+    a.zzszcyj, 
+    a.zzstsnrdm, 
+    a.xfsgl, 
+    a.xfszcyj, 
+    a.xfstsnrdm, 
+    a.gjz, 
+    a.hzx, 
+    a.tjjbm, 
+    a.bmb_bbh as bmbBbh, 
+    a.bbh, 
+    a.kyzt, 
+    a.qysj, 
+    a.gdqjzsj, 
+    a.sjbm, 
+    a.gxsj, 
+    a.wj, 
+    a.ishide, 
+    a.slvselect, 
+    a.yhzc, 
+    a.yhzcmc, 
+    a.lslvbs
+    from bm_spfl a
+	where a.sjbm = #{bm}
+	</select>
+	<select id="selectKey"
+		parameterType="java.lang.String"
+		resultType="com.liqun.entity.BmSpflZtree">
+			select
+		    a.bm,
+		    a.hbbm,
+		    a.mc,
+		    a.sm, 
+    		a.slv, 
+    		a.zzstsgl, 
+    		a.zzszcyj, 
+    		a.zzstsnrdm, 
+    		a.xfsgl, 
+    		a.xfszcyj, 
+    		a.xfstsnrdm, 
+    		a.gjz, 
+    		a.hzx, 
+    		a.tjjbm, 
+    		a.bmb_bbh as bmbBbh, 
+    		a.bbh, 
+    		a.kyzt, 
+    		a.qysj, 
+    		a.gdqjzsj, 
+    		a.sjbm, 
+    		a.gxsj, 
+    		a.wj, 
+    		a.ishide, 
+    		a.slvselect, 
+   		    a.yhzc, 
+    		a.yhzcmc, 
+    		a.lslvbs
+			from bm_spfl a
+			where a.bm = #{bm}
+	</select>
+</mapper>

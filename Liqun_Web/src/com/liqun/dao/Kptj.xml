@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liqun.dao.KptjDao">
+
+	<!-- 查询表中记录总数 -->
+	<select id="countAll" resultType="long">
+		SELECT COUNT(*) FROM i_inv;
+	</select>
+	
+	<select id="findKptj" resultType="com.liqun.dto.KptjDto">
+	
+		<!-- 
+		
+		
+		
+		select 
+		
+		(select SUM(jshj) from i_billmain where  jshj>0)as '销项正数含税金额'
+
+		 
+		
+		  
+		from i_billmain a ,i_billdel b, i_inv c 
+		where a.fplsh=b.fplsh 
+		and a.fptqm=b.fptqm  
+		and  a.FPLSH=c.FPLSH 
+		and a.fplsh=c.fplsh  
+		and (a.djzt=2 or  a.djzt=3) 
+	
+		<if test="fptqm != null and fptqm != ''">
+		and i.fptqm like concat(concat('%',#{fptqm}),'%')
+		</if>
+		
+		<if test="fplsh != null and fplsh !=''">
+			and i.fplsh like concat(concat('%',#{fplsh}),'%')
+		</if>
+		
+		<if test="starttime != null and starttime != ''">
+			and str_to_date(i.`kpsj`,'%Y-%m-%d') <![CDATA[>=]]> str_to_date(#{starttime},'%Y-%m-%d')
+		</if>
+
+		<if test="endtime != null and endtime != ''">
+			and str_to_date(i.`kpsj`,'%Y-%m-%d') <![CDATA[<=]]> str_to_date(#{endtime},'%Y-%m-%d')
+		</if>
+		
+		<if test="djzt != null and djzt!= ''">
+		and b.djzt = #{djzt}
+		</if>
+		
+		<if test="gfmc != null and gfmc !=''">
+			and i.gfmc like concat(concat('%',#{gfmc}),'%')
+		</if>
+
+		<if test="gfsh != null and gfsh !=''">
+			and i.gfsh like concat(concat('%',#{gfsh}),'%')
+		</if>
+		
+		<if test="xfmc != null and xfmc != ''">
+		and b.xfmc like concat(concat('%',#{xfmc}),'%')
+		</if>
+		
+		<if test="xfsh != null and xfsh != ''">
+		and b.xfsh like concat(concat('%',#{xfsh}),'%')
+		</if>
+		
+		ORDER BY i.fplsh DESC limit #{p.offset}, #{p.size} -->
+		<![CDATA[ 
+		select DISTINCT '销项正数含税金额' tjlx,(select SUM(zkhhsje) from i_billdel where  zkhhsje>0) hj,
+		(select sum(zkhhsje) from i_billdel where zkhhsje>0 and sl=0.17 ) shuilv1,
+		(select sum(zkhhsje) from i_billdel where zkhhsje>0 and sl=0.13 ) shuilv2,
+		(select sum(zkhhsje) from i_billdel where zkhhsje>0 and sl=0.11 ) shuilv3,
+		(select sum(zkhhsje) from i_billdel where zkhhsje>0 and sl=0.06 ) shuilv4,
+		(select sum(zkhhsje) from i_billdel where zkhhsje>0 and sl=0.04 ) shuilv5,
+		(select sum(zkhhsje) from i_billdel where zkhhsje>0 and sl=0.03 ) shuilv6,
+		(select sum(zkhhsje) from i_billdel where zkhhsje>0 and sl not in (0.03,0.04,0.06,0.11,0.13,0.17)) shuilv7
+			from i_billdel
+		union
+			select DISTINCT '销项负数含税金额' tjlx,(select SUM(zkhhsje) from i_billdel where  zkhhsje<0) hj,
+			(select sum(zkhhsje)from i_billdel where zkhhsje<0 and sl=0.17 ) shuilv1, 
+			(select sum(zkhhsje) from i_billdel where zkhhsje<0 and sl=0.13 ) shuilv2, 
+			(select sum(zkhhsje) from i_billdel where zkhhsje<0 and sl=0.11 ) shuilv3,
+			(select sum(zkhhsje) from i_billdel where zkhhsje<0 and sl=0.06 ) shuilv4,
+			(select sum(zkhhsje) from i_billdel where zkhhsje<0 and sl=0.04 ) shuilv5,
+			(select sum(zkhhsje) from i_billdel where zkhhsje<0 and sl=0.03 ) shuilv6,
+			(select sum(zkhhsje) from i_billdel where zkhhsje<0 and sl not in (0.03,0.04,0.06,0.11,0.13,0.17)) shuilv7
+			from i_billmain
+		union
+			select DISTINCT '销项正数未税金额' tjlx,(select SUM(xmje) from i_billdel where  xmje>0) hj,
+			(select sum(xmje) from i_billdel where xmje>0 and sl=0.17 ) shuilv1,
+			(select sum(xmje) from i_billdel where xmje>0 and sl=0.13 ) shuilv2,
+			(select sum(xmje) from i_billdel where xmje>0 and sl=0.11 ) shuilv3,
+			(select sum(xmje) from i_billdel where xmje>0 and sl=0.06 ) shuilv4,
+			(select sum(xmje) from i_billdel where xmje>0 and sl=0.04 ) shuilv5,
+			(select sum(xmje) from i_billdel where xmje>0 and sl=0.03 ) shuilv6,
+			(select sum(xmje) from i_billdel where xmje>0 and sl not in (0.03,0.04,0.06,0.11,0.13,0.17)) shuilv7
+			from i_billdel
+		union
+			select DISTINCT '销项负数未税金额' tjlx,(select SUM(xmje) from i_billdel where  xmje<0) hj,
+			(select sum(xmje) from i_billdel where xmje<0 and sl=0.17 ) shuilv1,
+			(select sum(xmje) from i_billdel where xmje<0 and sl=0.13 ) shuilv2,
+			(select sum(xmje) from i_billdel where xmje<0 and sl=0.11 ) shuilv3,
+			(select sum(xmje) from i_billdel where xmje<0 and sl=0.06 ) shuilv4,
+			(select sum(xmje) from i_billdel where xmje<0 and sl=0.04 ) shuilv5,
+			(select sum(xmje) from i_billdel where xmje<0 and sl=0.03 ) shuilv6,
+			(select sum(xmje) from i_billdel where xmje<0 and sl not in (0.03,0.04,0.06,0.11,0.13,0.17)) shuilv7
+			from i_billdel	
+		union
+			select DISTINCT '销项正数税额' tjlx,(select SUM(zkhse) from i_billdel where  zkhse>0) hj,
+			(select sum(zkhse) from i_billdel where zkhse>0 and sl=0.17 ) shuilv1,
+			(select sum(zkhse) from i_billdel where zkhse>0 and sl=0.13 ) shuilv2,
+			(select sum(zkhse) from i_billdel where zkhse>0 and sl=0.11 ) shuilv3,
+			(select sum(zkhse) from i_billdel where zkhse>0 and sl=0.06 ) shuilv4,
+			(select sum(zkhse) from i_billdel where zkhse>0 and sl=0.04 ) shuilv5,
+			(select sum(zkhse) from i_billdel where zkhse>0 and sl=0.03 ) shuilv6,
+			(select sum(zkhse) from i_billdel where zkhse>0 and sl not in (0.03,0.04,0.06,0.11,0.13,0.17)) shuilv7
+			from i_billdel
+		union	
+			select DISTINCT '销项负数税额' tjlx,(select SUM(zkhse) from i_billdel where  zkhse<0) hj,
+			(select sum(zkhse) from i_billdel where zkhse<0 and sl=0.17 ) shuilv1,
+			(select sum(zkhse) from i_billdel where zkhse<0 and sl=0.13 ) shuilv2,
+			(select sum(zkhse) from i_billdel where zkhse<0 and sl=0.11 ) shuilv3,
+			(select sum(zkhse) from i_billdel where zkhse<0 and sl=0.06 ) shuilv4,
+			(select sum(zkhse) from i_billdel where zkhse<0 and sl=0.04 ) shuilv5,
+			(select sum(zkhse) from i_billdel where zkhse<0 and sl=0.03 ) shuilv6,
+			(select sum(zkhse) from i_billdel where zkhse<0 and sl not in (0.03,0.04,0.06,0.11,0.13,0.17)) shuilv7
+			from i_billdel
+		union
+			select DISTINCT '销项含税金额合计' tjlx,(select SUM(zkhhsje) from i_billdel) hj,
+			(select sum(zkhhsje) from i_billdel where sl=0.17 ) shuilv1,
+			(select sum(zkhhsje) from i_billdel where sl=0.13 ) shuilv2,
+			(select sum(zkhhsje) from i_billdel where sl=0.11 ) shuilv3,
+			(select sum(zkhhsje) from i_billdel where sl=0.06 ) shuilv4,
+			(select sum(zkhhsje) from i_billdel where sl=0.04 ) shuilv5,
+			(select sum(zkhhsje) from i_billdel where sl=0.03 ) shuilv6,
+			(select sum(zkhhsje) from i_billdel where sl not in (0.03,0.04,0.06,0.11,0.13,0.17)) shuilv7
+			from i_billdel
+		union
+			select DISTINCT '销项不含税金额合计' tjlx,(select SUM(xmje) from i_billdel) hj,
+			(select sum(xmje) from i_billdel where sl=0.17 ) shuilv1,
+			(select sum(xmje) from i_billdel where sl=0.13 ) shuilv2,
+			(select sum(xmje) from i_billdel where sl=0.11 ) shuilv3,
+			(select sum(xmje) from i_billdel where sl=0.06 ) shuilv4,
+			(select sum(xmje) from i_billdel where sl=0.04 ) shuilv5,
+			(select sum(xmje) from i_billdel where sl=0.03 ) shuilv6,
+			(select sum(xmje) from i_billdel where sl not in (0.03,0.04,0.06,0.11,0.13,0.17)) shuilv7
+			from i_billdel
+		union
+			select DISTINCT '销项税额金额合计' tjlx,(select SUM(zkhse) from i_billdel) hj,
+			(select sum(zkhse) from i_billdel where sl=0.17 ) shuilv1,
+			(select sum(zkhse) from i_billdel where sl=0.13 ) shuilv2,
+			(select sum(zkhse) from i_billdel where sl=0.11 ) shuilv3,
+			(select sum(zkhse) from i_billdel where sl=0.06 ) shuilv4,
+			(select sum(zkhse) from i_billdel where sl=0.04 ) shuilv5,
+			(select sum(zkhse) from i_billdel where sl=0.03 ) shuilv6,
+			(select sum(zkhse) from i_billdel where sl not in (0.03,0.04,0.06,0.11,0.13,0.17)) shuilv7
+			from i_billdel				
+		 ]]>  
+	</select>
+	
+	
+	<!--  导出 -->
+	<select id="getIBillmainForExport" resultType="com.liqun.dto.KptjDto">
+	
+	
+	select
+		(select value from sys_dict where  sys_dict.code=1002 and sys_dict.`key`=i.`fplx`) as fplx,
+		a.xmmc,
+		a.spbm,
+		a.ggxh,
+		a.jldw,
+		
+		a.xmsl,
+		a.xmdj,
+		a.sl,
+		a.se,
+		a.hsdj,
+		
+		a.hsje,
+		a.zkje,
+		a.zkse,
+		a.zkhsje,
+		a.zkhhsje,
+		
+		a.zkhje,
+		a.zkhse,
+		i.fptqm,
+		i.fplsh,
+		i.fpdm,
+		
+		i.fphm,
+		DATE_FORMAT(i.`KPSJ`,'%Y-%m-%d %H:%i:%s')as kpsj,
+		i.qybh,
+		i.POS_ID as posId,
+		i.gfmc,
+		
+		i.gfsh,
+		i.gfyhzh,
+		i.gfdzdh,
+		i.pdfxzdz,
+		i.sjh,
+		
+		
+		i.skr,
+		i.fhr,
+		i.kpr,
+		i.hjje,
+		
+		i.hjse,
+		(select value from sys_dict where  sys_dict.code=1003 and sys_dict.`key`=b.`djzt`) as djzt,
+		
+		
+		
+	
+		
+		
+		
+		
+		
+		
+		
+		b.email
+		
+		from i_billdel a
+		left join i_inv i 
+		on a.`FPLSH`= i.`FPLSH`
+		
+		left join i_billmain b
+		on a.`FPLSH`= b.`FPLSH`
+		
+		where 1=1
+		
+		<if test="fptqm != null and fptqm != ''">
+		and i.fptqm like concat(concat('%',#{fptqm}),'%')
+		</if>
+		
+		<if test="fplsh != null and fplsh !=''">
+			and i.fplsh like concat(concat('%',#{fplsh}),'%')
+		</if>
+		
+		<if test="starttime != null and starttime != ''">
+			and str_to_date(i.`kpsj`,'%Y-%m-%d') <![CDATA[>=]]> str_to_date(#{starttime},'%Y-%m-%d')
+		</if>
+
+		<if test="endtime != null and endtime != ''">
+			and str_to_date(i.`kpsj`,'%Y-%m-%d') <![CDATA[<=]]> str_to_date(#{endtime},'%Y-%m-%d')
+		</if>
+		
+		<if test="djzt != null and djzt!= ''">
+		and b.djzt = #{djzt}
+		</if>
+		
+		<if test="gfmc != null and gfmc !=''">
+			and i.gfmc like concat(concat('%',#{gfmc}),'%')
+		</if>
+
+		<if test="gfsh != null and gfsh !=''">
+			and i.gfsh like concat(concat('%',#{gfsh}),'%')
+		</if>
+		
+		<if test="xfmc != null and xfmc != ''">
+		and b.xfmc like concat(concat('%',#{xfmc}),'%')
+		</if>
+		
+		<if test="xfsh != null and xfsh != ''">
+		and b.xfsh like concat(concat('%',#{xfsh}),'%')
+		</if>
+	ORDER BY i.fplsh DESC
+	</select>
+	</mapper>

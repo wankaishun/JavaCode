@@ -1,0 +1,31 @@
+{
+  "name": "RRS_Health_Wechat",
+  "version": "0.0.0",
+  "authors": [
+    "mikey"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": ">=3.2.1",
+    "bootstrap": ">=3.3.7",
+    "font-awesome": ">=4.7.0",
+    "angular": ">=1.6.5",
+    "angular-messages": "^1.6.6",
+    "angular-ui-router": ">=1.0.5",
+    "angular-ui-router-title": ">=0.1.1",
+    "angular-shiro": ">=0.1.3",
+    "angular-hipsum": ">=1.1.0",
+    "crypto-js": "^3.1.9",
+    "jsencrypt": "^2.3.0",
+    "angular-validation-match": "^1.9.0",
+    "sockjs-client": "^1.1.4",
+    "stomp-websocket": "^2.3.4"
+  }
+}

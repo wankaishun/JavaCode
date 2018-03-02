@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.liqun.dao.BizProductBrandDao">
+
+
+<!-- 是否存在该编号 -->
+<select id="brandExist" resultType="long">  
+	SELECT COUNT(*) FROM biz_product_brand where productBrandNo=#{productBrandNo} ;
+</select>
+<!-- 查询表中的所有数据 -->
+<select id="selectAll" resultType="com.liqun.entity.BizProductBrand">    
+	SELECT * FROM biz_product_brand 
+</select>
+
+<!-- 插入数据 -->
+<insert id="insert"	parameterType="com.liqun.entity.BizProductBrand" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+    INSERT INTO biz_product_brand(productBrandNo,productBrandName,reserve1,reserve2,reserve3,reserve4,reserve5,flag,createUser,createDate,updateUser,updateDate)
+    VALUES (#{productBrandNo}, #{productBrandName}, #{reserve1}, #{reserve2}, #{reserve3}, #{reserve4}, #{reserve5}, #{flag}, #{createUser}, #{createDate}, #{updateUser}, #{updateDate})
+</insert>
+
+<!-- 更新数据 -->
+<update id="update"	parameterType="com.liqun.entity.BizProductBrand">
+     UPDATE biz_product_brand SET productBrandNo=ifnull(#{productBrandNo}, productBrandNo), productBrandName=ifnull(#{productBrandName}, productBrandName)
+   ,reserve1=ifnull(#{reserve1}, reserve1), reserve2=ifnull(#{reserve2}, reserve2), reserve3=ifnull(#{reserve3}, reserve3)
+   ,reserve4=ifnull(#{reserve4}, Reserve4), reserve5=ifnull(#{reserve5}, Reserve5)
+   ,flag=ifnull(#{flag}, flag), createUser=ifnull(#{createUser}, CreateUser), createDate=ifnull(#{createDate}, CreateDate)
+   ,updateUser=ifnull(#{updateUser}, UpdateUser), updateDate=ifnull(#{updateDate}, UpdateDate) 
+   WHERE id=#{id}
+</update>
+
+<!-- 根据主键删除数据 -->
+<delete id="delete" parameterType="java.lang.Long">    
+	DELETE FROM biz_product_brand  WHERE id =#{id}
+</delete>
+
+<!-- 根据主键查找数据模型 -->
+<select id="findByName" parameterType="java.lang.String" resultType="com.liqun.entity.BizProductBrand"> 
+	SELECT * FROM biz_product_brand  WHERE productBrandName =#{productBrandName }
+</select>
+<!-- 查询表中记录总数 -->
+<select id="countAll" resultType="long">  
+	SELECT COUNT(*) FROM biz_product_brand where flag =ifnull(#{flag}, flag) and productBrandName LIKE '%${productBrandName}%'
+</select>
+ <!-- 根据主键DB分页 需要重新指定分页类的命名空间 主键排序 以及limit 分页参数 -->
+<select id="findAll" resultType="com.liqun.entity.BizProductBrand">
+	SELECT * FROM biz_product_brand where flag =ifnull(#{flag}, flag) and productBrandName LIKE '%${productBrandName}%' ORDER BY productBrandName  DESC limit #{p.offset}, #{p.size}
+</select>
+ <!-- 根据品类id查询品牌-->
+<select id="findBrandbyCategoryId" resultType="com.liqun.entity.BizProductCategoryBrandVW"> 
+	SELECT l.id,b.productBrandNo,b.productBrandName,l.canInstall,l.canRepair FROM biz_product_brand b 
+	left join biz_product_category_brand_service l on b.id=l.brandId 
+    where b.productBrandName LIKE '%${productBrandName}%' and l.categoryId=#{categoryId}
+	ORDER BY b.productBrandName  DESC limit #{p.offset}, #{p.size}
+</select>
+<select id="findBrandbyCategoryIdCount" resultType="long">  
+	SELECT COUNT(*) FROM biz_product_brand b 
+	left join biz_product_category_brand_service l on b.id=l.brandId 
+    where b.productBrandName LIKE '%${productBrandName}%' and l.categoryId=#{categoryId}	
+</select>
+ <!-- 查询未绑定品类id的品牌-->
+<select id="findBrandUnLinkedByCategoryId" resultType="com.liqun.entity.BizProductBrand"> 
+	SELECT * FROM biz_product_brand where flag=1 and
+	 productBrandName LIKE '%${productBrandName}%'
+	and id not in(select brandId FROM biz_product_category_brand_service where categoryId=#{categoryId}) 
+    ORDER BY productBrandName  DESC limit #{p.offset}, #{p.size}
+</select>
+<select id="findBrandUnLinkedByCategoryIdCount" resultType="long">  
+	SELECT COUNT(*) FROM biz_product_brand where productBrandName LIKE '%${productBrandName}%'
+	and id not in(select brandId FROM biz_product_category_brand_service where categoryId=#{categoryId})	
+</select>
+</mapper>
+

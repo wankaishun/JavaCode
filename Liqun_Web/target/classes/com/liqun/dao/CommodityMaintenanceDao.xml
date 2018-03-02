@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liqun.dao.CommodityMaintenanceDao">
+
+	<!-- 分页查询商品信息 -->
+	<select id="findAll" resultType="com.liqun.entity.NewCommodityMaintenance">
+		SELECT 
+			spid,
+			spbm,
+			spbh,
+			spm,
+			spgg,
+			spdw,
+			bhsdj,
+			hsdj,
+			sl,
+			(select value from sys_dict where code =1004 and `key` = m_prouct.yhzc ) as yhzc,
+			(select value from sys_dict where code =1006 and `key` = m_prouct.yhzclx ) as yhzclx,
+			(select value from sys_dict where code =1007 and `key` = m_prouct.spzt ) as spzt,
+			zhgxsj
+		 FROM m_prouct 
+		 
+		where 1=1
+		and spzt = 1
+		<if test="realName != null and realName != ''">
+			  and spm like concat(concat('%',#{realName}),'%')
+		</if>
+		<if test="flag != null and flag != ''">
+			  and spbm like concat(concat('%',#{flag}),'%')
+		</if>
+			 limit #{p.offset}, #{p.size}
+	</select>
+	
+	<!-- 查询表中记录总数 -->
+	<select id="countAll" resultType="long">
+		SELECT COUNT(*) FROM sys_user;
+	</select>
+	
+	<!-- 新增商品数据 -->
+	<insert id="insert"	parameterType="com.liqun.entity.CommodityMaintenance">
+    	INSERT INTO m_prouct(spbm,spbh,spm,spgg,spdw,sl,bhsdj,hsdj,yhzc,yhzclx,spzt,zhgxsj)
+    	VALUES (#{spbm}, #{spbh}, #{spm}, #{spgg}, #{spdw}, #{sl}, #{bhsdj}, #{hsdj}, #{yhzc}, #{yhzclx}, #{spzt}, #{zhgxsj})
+	</insert>
+
+	<!-- 更新商品数据 -->
+	<update id="update"	parameterType="com.liqun.entity.CommodityMaintenance">
+     	UPDATE m_prouct SET spbm=#{spbm}, spbh=#{spbh}
+   		,spm=#{spm}, spgg=#{spgg}, spdw=#{spdw}
+   		,sl = #{sl}, bhsdj=#{bhsdj}
+   		,hsdj = #{hsdj}, yhzc=#{yhzc}, yhzclx=#{yhzclx}, zhgxsj=#{zhgxsj}
+   		WHERE spid=#{spid}
+	</update>
+
+	<!-- 删除正常商品数据状态 -->
+	<update id="delete"	parameterType="java.util.Map" >
+     	UPDATE m_prouct SET spzt = 0
+   		WHERE spid
+        <foreach  collection="ids" item="spid" open="in (" close=")" separator=",">   
+            #{spid} 
+        </foreach> 
+	</update>
+	<!-- 根据商品id检索商品信息 -->
+	<select id="get" 
+		parameterType="com.liqun.entity.CommodityMaintenance"
+		resultType="com.liqun.entity.CommodityMaintenance">
+			select * from m_prouct where spid=#{spid}
+	</select>
+	<!-- 导出 -->
+	<select id="getIBillmainForExport" resultType="com.liqun.entity.CommodityMaintenance">
+		SELECT 
+			spid,
+			spbm,
+			spbh,
+			spm,
+			spgg,
+			spdw,
+			bhsdj,
+			hsdj,
+			sl,
+			(select value from sys_dict where code =1004 and `key` = m_prouct.yhzc ) as yhzc,
+			(select value from sys_dict where code =1006 and `key` = m_prouct.yhzclx ) as yhzclx,
+			(select value from sys_dict where code =1007 and `key` = m_prouct.spzt ) as spzt,
+			zhgxsj
+		 FROM m_prouct 
+		 
+		where 1=1
+		and spzt = 1
+		<if test="realName != null and realName != ''">
+			  and spm like concat(concat('%',#{realName}),'%')
+		</if>
+		<if test="flag != null and flag != ''">
+			  and spbm like concat(concat('%',#{flag}),'%')
+		</if>
+	</select>
+</mapper>
